@@ -1,0 +1,11 @@
+gcp_project_id: "your-gcp-project-id"
+
+budgets:
+  - service: "bigquery.googleapis.com"
+    limit: 100.00 # in USD
+  - service: "aiplatform.googleapis.com" # Vertex AI
+    limit: 50.00
+  - service: "firestore.googleapis.com"
+    limit: 25.00
+
+notification_email: "your-email@example.com"
