@@ -47,10 +47,17 @@ def monitor_costs():
 def get_service_cost(client, service, start_date, end_date):
     # This is a simplified cost retrieval. 
     # A real implementation would need more sophisticated logic to map SKUs to services.
-    # For now, we'll simulate this with a placeholder.
+    # For testing purposes in Qwiklabs, we simulate costs to trigger alerts
     # In a real scenario, you would query the detailed billing export in BigQuery.
     print(f"Getting cost for {service} from {start_date} to {end_date}")
-    return 0.0 # Placeholder
+    
+    # Simulate cost for testing (90% of budget to trigger warning)
+    # Change this value to test different scenarios:
+    # - Return 0.009 to trigger warning (80-99% of 0.01 budget)
+    # - Return 0.011 to trigger service disable (>100% of budget)
+    simulated_cost = 0.009
+    print(f"Simulated cost for {service}: ${simulated_cost}")
+    return simulated_cost
 
 def handle_budget_exceeded(usage_client, publisher, db, service_name, cost, budget_limit):
     print(f"Budget exceeded for {service_name}. Cost: {cost}, Budget: {budget_limit}")

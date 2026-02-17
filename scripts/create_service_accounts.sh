@@ -28,12 +28,6 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:$DEPLOYMENT_SA_EMAIL" \
     --role="roles/iam.serviceAccountAdmin"
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-    --member="serviceAccount:$DEPLOYMENT_SA_EMAIL" \
-    --role="roles/billing.viewer"
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-    --member="serviceAccount:$DEPLOYMENT_SA_EMAIL" \
-    --role="roles/resourcemanager.projectIamAdmin"
 
 # Create Runtime Service Account
 echo "Creating Runtime Service Account..."
@@ -53,9 +47,6 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:$RUNTIME_SA_EMAIL" \
     --role="roles/run.invoker"
-gcloud projects add-iam-policy-binding $PROJECT_ID \
-    --member="serviceAccount:$RUNTIME_SA_EMAIL" \
-    --role="roles/billing.viewer"
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:$RUNTIME_SA_EMAIL" \
     --role="roles/serviceusage.serviceUsageAdmin"

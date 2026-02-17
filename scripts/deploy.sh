@@ -42,8 +42,13 @@ echo "Creating secret for SMTP App Password..."
 gcloud secrets create $SECRET_NAME --replication-policy="automatic" || echo "Secret $SECRET_NAME already exists."
 
 # Add a secret version
-echo "Adding secret version... (you will be prompted to enter the secret value)"
-gcloud secrets versions add $SECRET_NAME --data-file=-
+if [ -z "$SMTP_APP_PASSWORD" ]; then
+    echo "Adding secret version... (you will be prompted to enter the secret value)"
+    gcloud secrets versions add $SECRET_NAME --data-file=-
+else
+    echo "Using SMTP_APP_PASSWORD from environment variable"
+    echo -n "$SMTP_APP_PASSWORD" | gcloud secrets versions add $SECRET_NAME --data-file=-
+fi
 
 # Grant the runtime service account access to the secret
 gcloud secrets add-iam-policy-binding $SECRET_NAME \
@@ -52,12 +57,14 @@ gcloud secrets add-iam-policy-binding $SECRET_NAME \
 
 # Deploy notification service
 echo "Deploying notification service..."
+SMTP_EMAIL="${SMTP_EMAIL:-ashish.dwivedi@gmail.com}"
+ALERT_RECEIVER_EMAIL="${ALERT_RECEIVER_EMAIL:-ashishdwivedi9229@onixnet.us}"
 gcloud run deploy $NOTIFICATION_SERVICE_NAME \
     --source ./src/notification_service \
     --region $REGION \
     --service-account $RUNTIME_SA_EMAIL \
     --no-allow-unauthenticated \
-    --set-env-vars="SMTP_EMAIL=ashish.dwivedi@gmail.com,ALERT_RECEIVER_EMAIL=ashishdwivedi9229@onixnet.us,GCP_PROJECT=$PROJECT_ID"
+    --set-env-vars="SMTP_EMAIL=$SMTP_EMAIL,ALERT_RECEIVER_EMAIL=$ALERT_RECEIVER_EMAIL,GCP_PROJECT=$PROJECT_ID"
 
 # Create Pub/Sub subscription for the notification service
 echo "Creating Pub/Sub subscription..."
