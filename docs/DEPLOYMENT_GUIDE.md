@@ -6,7 +6,7 @@ This guide provides all the steps necessary to deploy and test the GCP Cost Cont
 
 1.  A Google Cloud Platform project.
 2.  The `gcloud` command-line tool installed and authenticated (`gcloud auth login`).
-3.  A SendGrid account and API key for sending email notifications.
+3.  A Google account with a Gmail App Password for sending email notifications.
 4.  Your GCP project ID configured in `gcloud` (`gcloud config set project YOUR_PROJECT_ID`).
 
 ## Required APIs
@@ -22,6 +22,7 @@ The deployment script will automatically enable the following APIs:
 *   Service Usage API
 *   Firestore API
 *   Cloud Build API
+*   Secret Manager API
 
 ## IAM Setup
 
@@ -44,10 +45,11 @@ The deployment script will create two service accounts with the necessary roles:
     *   Adjust the budget limits for each service as needed.
 
 3.  **Set environment variables for deployment script:**
-    The `deploy.sh` script requires your SendGrid API key and notification email. You can set them as environment variables:
+    The `deploy.sh` script requires your Gmail credentials. You can set them as environment variables:
     ```bash
-    export SENDGRID_API_KEY="YOUR_SENDGRID_API_KEY"
-    export NOTIFICATION_EMAIL="your-email@example.com"
+    export SMTP_EMAIL="your-email@gmail.com"
+    export SMTP_APP_PASSWORD="YOUR_GMAIL_APP_PASSWORD"
+    export ALERT_RECEIVER_EMAIL="your-email@example.com"
     ```
     Then update the `deploy.sh` script to use these variables in the `gcloud run deploy` command for the notification service.
 
@@ -89,7 +91,7 @@ The deployment script will create two service accounts with the necessary roles:
 For a production environment, consider the following:
 
 *   **Cost Calculation:** Implement the BigQuery-based cost calculation for accurate cost data.
-*   **Security:** Store the SendGrid API key in Secret Manager instead of passing it as an environment variable.
+*   **Security:** Store the `SMTP_APP_PASSWORD` in Secret Manager instead of passing it as an environment variable.
 *   **Reset Mechanism:** The current version lacks an automated reset. You would need to add a script or another Cloud Scheduler job to re-enable services at the start of each billing cycle.
 
 ## Deployment in an Organization GCP Environment

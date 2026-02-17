@@ -1,9 +1,9 @@
-gcp_project_id: "your-gcp-project-id"
+gcp_project_id: "qwiklabs-gcp-03-3e9201f3ade6"
 
 budgets:
   - service: "bigquery.googleapis.com"
-    limit: 100.00 # in USD
+    limit: 0.01 # in USD
   - service: "aiplatform.googleapis.com" # Vertex AI
-    limit: 50.00
+    limit: 0.01 # in USD
   - service: "firestore.googleapis.com"
-    limit: 25.00
+    limit: 0.01

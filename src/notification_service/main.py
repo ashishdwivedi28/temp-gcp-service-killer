@@ -2,13 +2,11 @@ import os
 import base64
 import json
 from flask import Flask, request
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from email_service import send_email
 
 app = Flask(__name__)
 
-SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
-NOTIFICATION_EMAIL = os.environ.get('NOTIFICATION_EMAIL')
+ALERT_RECEIVER_EMAIL = os.environ.get('ALERT_RECEIVER_EMAIL')
 
 @app.route('/', methods=['POST'])
 def receive_notification():
@@ -19,17 +17,11 @@ def receive_notification():
     message_data = base64.b64decode(request.json['message']['data']).decode('utf-8')
     data = json.loads(message_data)
 
-    send_email(data)
-
-    return "OK", 200
-
-def send_email(data):
-    """Sends an email using SendGrid."""
-    service_name = data['service_name']
-    current_cost = data['current_cost']
-    budget_limit = data['budget_limit']
-    action_taken = data['action_taken']
-    timestamp = data['timestamp']
+    service_name = data.get('service_name', 'N/A')
+    current_cost = data.get('current_cost', 0)
+    budget_limit = data.get('budget_limit', 0)
+    action_taken = data.get('action_taken', 'N/A')
+    timestamp = data.get('timestamp', 'N/A')
 
     subject = f"GCP Budget Alert: {service_name}"
     body = f"""
@@ -43,17 +35,10 @@ def send_email(data):
     </ul>
     """
 
-    message = Mail(
-        from_email=NOTIFICATION_EMAIL,
-        to_emails=NOTIFICATION_EMAIL,
-        subject=subject,
-        html_content=body)
-    try:
-        sg = SendGridAPIClient(SENDGRID_API_KEY)
-        response = sg.send(message)
-        print(f"Email sent with status code: {response.status_code}")
-    except Exception as e:
-        print(f"Error sending email: {e}")
+    send_email(subject, body, ALERT_RECEIVER_EMAIL)
+
+    return "OK", 200
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))

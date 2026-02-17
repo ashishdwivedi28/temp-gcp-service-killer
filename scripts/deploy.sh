@@ -35,6 +35,21 @@ gcloud run deploy $COST_MONITORING_SERVICE_NAME \
     --service-account $RUNTIME_SA_EMAIL \
     --allow-unauthenticated
 
+SECRET_NAME="SMTP_APP_PASSWORD"
+
+# Create secret for SMTP App Password
+echo "Creating secret for SMTP App Password..."
+gcloud secrets create $SECRET_NAME --replication-policy="automatic" || echo "Secret $SECRET_NAME already exists."
+
+# Add a secret version
+echo "Adding secret version... (you will be prompted to enter the secret value)"
+gcloud secrets versions add $SECRET_NAME --data-file=-
+
+# Grant the runtime service account access to the secret
+gcloud secrets add-iam-policy-binding $SECRET_NAME \
+    --member="serviceAccount:$RUNTIME_SA_EMAIL" \
+    --role="roles/secretmanager.secretAccessor"
+
 # Deploy notification service
 echo "Deploying notification service..."
 gcloud run deploy $NOTIFICATION_SERVICE_NAME \
@@ -42,7 +57,7 @@ gcloud run deploy $NOTIFICATION_SERVICE_NAME \
     --region $REGION \
     --service-account $RUNTIME_SA_EMAIL \
     --no-allow-unauthenticated \
-    --set-env-vars="SENDGRID_API_KEY=YOUR_SENDGRID_API_KEY,NOTIFICATION_EMAIL=your-email@example.com"
+    --set-env-vars="SMTP_EMAIL=ashish.dwivedi@gmail.com,ALERT_RECEIVER_EMAIL=ashishdwivedi9229@onixnet.us,GCP_PROJECT=$PROJECT_ID"
 
 # Create Pub/Sub subscription for the notification service
 echo "Creating Pub/Sub subscription..."

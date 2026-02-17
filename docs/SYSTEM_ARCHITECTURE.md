@@ -34,7 +34,7 @@ This project provides a robust and automated system to monitor and control spend
 +---------------------------+
          |
          | 1. Receive message
-         | 2. Send email (SendGrid)
+         | 2. Send email (Gmail SMTP)
          v
 +-----------------------+
 |      User Email       |
@@ -58,7 +58,7 @@ This project provides a robust and automated system to monitor and control spend
 4.  **Notification Service (Cloud Run):**
     *   A push subscription to the `cost-alerts` topic triggers this service whenever a new message is published.
     *   It parses the message to get details like service name, cost, and action taken.
-    *   It formats and sends an email to the configured notification email address using the SendGrid API.
+    *   It formats and sends an email to the configured notification email address using the Gmail SMTP service.
 
 5.  **Firestore:** A `service_states` collection is used to maintain the state of each monitored service (e.g., whether it is currently disabled). This prevents duplicate "disable" actions.
 

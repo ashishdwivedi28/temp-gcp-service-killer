@@ -22,6 +22,7 @@ gcloud services enable \
   iam.googleapis.com \
   serviceusage.googleapis.com \
   firestore.googleapis.com \
-  cloudbuild.googleapis.com
+  cloudbuild.googleapis.com \
+  secretmanager.googleapis.com
 
 echo "APIs enabled successfully."
